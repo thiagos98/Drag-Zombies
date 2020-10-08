@@ -14,10 +14,12 @@ We must hold one zombie at a time, and drag it away from the main character, so 
 - Winning condition: manage to overcome all the levels, and escape from the zombies.
 - Defeat condition: be killed by the zombies.
 - Head-Up display: countdown.
-### Main character
+## Main character
 > This guy found me and took care of me. We met with other survivors and tried to get through it all, but ... it didn't work. His name was Lee. He taught me how to survive.
 
 ![Clementine](/Assets/Images/ClementineZombies.png)
+## Download
+[Download the game](https://thiagos98.itch.io/drag-zombies "Download the game")
 
 ## References
 - The Walking Dead: The Telltale Definitive Series
