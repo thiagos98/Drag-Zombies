@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Analytics;
 
 public class GameMaster : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class GameMaster : MonoBehaviour
     public void Start()
     {
         oldTimer = timer;
+        Analytics.CustomEvent("StartLevel", new Dictionary<string, object>{
+            {"levelNumber", SceneManager.GetActiveScene()}
+        });
     }
     public void Update()
     {
@@ -39,6 +43,10 @@ public class GameMaster : MonoBehaviour
     }
     public void GameOver()
     {
+        Analytics.CustomEvent("gameOver", new Dictionary<string, object>{
+            { "tempo", timer },
+            { "level", SceneManager.GetActiveScene()}
+        });
         isOver = true;
         Delay();
     }

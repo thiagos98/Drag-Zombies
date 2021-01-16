@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class DragAndDrop : MonoBehaviour
 {
@@ -34,6 +35,10 @@ public class DragAndDrop : MonoBehaviour
                     source.Play();
                     movedAllowed = true;
                 }
+                Analytics.CustomEvent("inicioDoToque", new Dictionary<string, object> {
+                    {"x", touchPosition.x},
+                    {"y", touchPosition.y}
+                });
             }
 
             if(touch.phase == TouchPhase.Moved)//quando estamos movendo o dedo na tela
@@ -42,12 +47,19 @@ public class DragAndDrop : MonoBehaviour
                 {
                     transform.position = new Vector2(touchPosition.x,touchPosition.y);
                 }
-                
+                Analytics.CustomEvent("movendoDedo", new Dictionary<string, object> {
+                    {"x", touchPosition.x},
+                    {"y", touchPosition.y}
+                });
             }
 
             if(touch.phase == TouchPhase.Ended)//quando finalizamos o toque na tela
             {
                 movedAllowed = false;
+                Analytics.CustomEvent("fimDoToque", new Dictionary<string, object> {
+                    {"x", touchPosition.x},
+                    {"y", touchPosition.y}
+                });
             }
         }
     }
