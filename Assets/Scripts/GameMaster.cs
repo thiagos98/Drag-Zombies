@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -33,7 +34,7 @@ public class GameMaster : MonoBehaviour
             if(isRunning)
             {
                 timer -= Time.deltaTime;
-                score.text = "Tempo: " + timer;
+                score.text = "Tempo: " + Math.Round(timer, 2);
             }
             else
             {
