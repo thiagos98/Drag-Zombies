@@ -1,12 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-public void GoToGameScene()
+    [SerializeField] private string gameSceneName = "Game1";
+
+    public void GoToGameScene()
     {
-        SceneManager.LoadScene("Game1");
+        SceneManager.LoadScene(gameSceneName);
     }
 }

@@ -1,33 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 
 public class RandomPatrol : MonoBehaviour
 {
-    public float minX;
-    public float maxX;
-    public float minY;
-    public float maxY;
-    float speed;
-    public float maxSpeed;
-    public float minSpeed;
-    public float secondsToMaxDifficulty;
-    Vector2 targetPosition;
+    [SerializeField] private float minX;
+    [SerializeField] private float maxX;
+    [SerializeField] private float minY;
+    [SerializeField] private float maxY;
+    [SerializeField] private float maxSpeed;
+    [SerializeField] private float minSpeed;
+    [SerializeField] private float secondsToMaxDifficulty = 10f;
 
-    // Start is called before the first frame update
-    void Start()
+    private float speed;
+    private Vector2 targetPosition;
+
+    private void Start()
     {
         targetPosition = GetRandomPosition();
+        speed = minSpeed;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if((Vector2)transform.position != targetPosition)
+        if ((Vector2)transform.position != targetPosition)
         {
             speed = Mathf.Lerp(minSpeed, maxSpeed, GetDifficultyPercent());
-            transform.position = Vector2.MoveTowards(transform.position, targetPosition, speed*Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
         }
         else
         {
@@ -35,17 +32,20 @@ public class RandomPatrol : MonoBehaviour
         }
     }
 
-    Vector2 GetRandomPosition()
+    private Vector2 GetRandomPosition()
     {
-        float randomX = Random.Range(minX,maxX);
-        float randomY = Random.Range(minY,maxY);
-        return new Vector2(randomX,randomY);
+        float randomX = Random.Range(minX, maxX);
+        float randomY = Random.Range(minY, maxY);
+        return new Vector2(randomX, randomY);
     }
 
-
-
-    float GetDifficultyPercent()
+    private float GetDifficultyPercent()
     {
-        return Mathf.Clamp01(Time.timeSinceLevelLoad/secondsToMaxDifficulty);
+        if (secondsToMaxDifficulty <= 0f)
+        {
+            return 1f;
+        }
+
+        return Mathf.Clamp01(Time.timeSinceLevelLoad / secondsToMaxDifficulty);
     }
 }

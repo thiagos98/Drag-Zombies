@@ -1,74 +1,86 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Analytics;
 
 public class DragAndDrop : MonoBehaviour
 {
-    bool movedAllowed;
-    Collider2D col;
-    //public ParticleSystem deathEffect;
+    private bool movedAllowed;
+    private Collider2D col;
+    private Camera mainCamera;
     private GameMaster gm;
     private AudioSource source;
-    public AudioSource explosion;
-    // Start is called before the first frame update
-    void Start()
+
+    [SerializeField] private AudioSource explosion;
+
+    private void Start()
     {
         source = GetComponent<AudioSource>();
-        gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameMaster>();
+        gm = GameObject.FindGameObjectWithTag("GM")?.GetComponent<GameMaster>();
         col = GetComponent<Collider2D>();
+        mainCamera = Camera.main;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if(Input.touchCount > 0)
+        if (Input.touchCount <= 0)
         {
-            Touch touch = Input.GetTouch(0);
-            Vector2 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
+            return;
+        }
 
-            if(touch.phase == TouchPhase.Began)//quando iniciamos o toque na tela
+        Touch touch = Input.GetTouch(0);
+        Vector2 touchPosition = mainCamera != null
+            ? (Vector2)mainCamera.ScreenToWorldPoint(touch.position)
+            : touch.position;
+
+        if (touch.phase == TouchPhase.Began)
+        {
+            Collider2D touchedCollider = Physics2D.OverlapPoint(touchPosition);
+            movedAllowed = col != null && col == touchedCollider;
+
+            if (movedAllowed)
             {
-                Collider2D touchedCollider = Physics2D.OverlapPoint(touchPosition);
-                if(col == touchedCollider)
-                {
-                    source.Play();
-                    movedAllowed = true;
-                }
-                Analytics.CustomEvent("inicioDoToque", new Dictionary<string, object> {
-                    {"x", touchPosition.x},
-                    {"y", touchPosition.y}
-                });
+                source?.Play();
             }
 
-            if(touch.phase == TouchPhase.Moved)//quando estamos movendo o dedo na tela
-            {   
-                if(movedAllowed)
-                {
-                    transform.position = new Vector2(touchPosition.x,touchPosition.y);
-                }
-                Analytics.CustomEvent("movendoDedo", new Dictionary<string, object> {
-                    {"x", touchPosition.x},
-                    {"y", touchPosition.y}
-                });
-            }
-
-            if(touch.phase == TouchPhase.Ended)//quando finalizamos o toque na tela
+            Analytics.CustomEvent("inicioDoToque", new Dictionary<string, object>
             {
-                movedAllowed = false;
-                Analytics.CustomEvent("fimDoToque", new Dictionary<string, object> {
-                    {"x", touchPosition.x},
-                    {"y", touchPosition.y}
-                });
+                { "x", touchPosition.x },
+                { "y", touchPosition.y }
+            });
+        }
+
+        if (touch.phase == TouchPhase.Moved)
+        {
+            if (movedAllowed)
+            {
+                transform.position = touchPosition;
             }
+
+            Analytics.CustomEvent("movendoDedo", new Dictionary<string, object>
+            {
+                { "x", touchPosition.x },
+                { "y", touchPosition.y }
+            });
+        }
+
+        if (touch.phase == TouchPhase.Ended)
+        {
+            movedAllowed = false;
+
+            Analytics.CustomEvent("fimDoToque", new Dictionary<string, object>
+            {
+                { "x", touchPosition.x },
+                { "y", touchPosition.y }
+            });
         }
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "Target")
+        if (collision.CompareTag("Target"))
         {
-            explosion.Play();
-            gm.GameOver();
+            explosion?.Play();
+            gm?.GameOver();
         }
     }
 }
